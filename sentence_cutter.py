@@ -15,21 +15,23 @@ class SentenceCutter:
     def cut_english_sentences(text):
         # 令句子长度不能小于5个单词
         long_machine_en = StateMachine(long_cuter_en(min_len=5))
-        m_input = EnSequence(paragraph)
+        m_input = EnSequence(text)
         long_machine_en.run(m_input)
-        return m_input
+        sentences = m_input.sentence_list()
+        return sentences
 
     @staticmethod
     def cut_chinese_sentences(text):
         # -- 初始化 状态机器 -- #
         cuter = StateMachine(long_short_cuter(hard_max=128, max_len=128, min_len=15))
-        sequence = cuter.run(StrSequence(paragraph))
+        sequence = cuter.run(StrSequence(text))
         sentences = sequence.sentence_list()
         return sentences
 
     def cut_sentences(self, text):
         lang = detect(text)
-        if lang == 'zh-cn':
+        #print(lang)
+        if lang.startswith('zh'):
             # 中文切句调用 cut_to_sentences
             sentences = self.cut_chinese_sentences(text)
         elif lang == 'en':
@@ -42,6 +44,7 @@ class SentenceCutter:
 
 if __name__ == '__main__':
     sc = SentenceCutter()
-    paragraph = "在很久很久以前......。。... 有座山，山里有座庙啊!!!!!!!庙里竟然有个老和尚！？。。。。"
+    paragraph = "today is a very nice day, i'm feeling good. how about you?"
+    #paragraph = "在很久很久以前......。。... 有座山，山里有座庙啊!!!!!!!庙里竟然有个老和尚！？。。。。"
     result = sc.cut_sentences(paragraph)
     print(result)
