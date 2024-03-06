@@ -4,7 +4,8 @@ from sentence_spliter import spliter
 from sentence_spliter.logic_graph_en import long_cuter_en
 from sentence_spliter.automata.state_machine import StateMachine
 from sentence_spliter.automata.sequence import EnSequence
-
+from sentence_spliter.logic_graph import long_short_cuter
+from sentence_spliter.automata.sequence import StrSequence
 
 class SentenceCutter:
     def __init__(self):
@@ -18,11 +19,19 @@ class SentenceCutter:
         long_machine_en.run(m_input)
         return m_input
 
+    @staticmethod
+    def cut_chinese_sentences(text):
+        # -- 初始化 状态机器 -- #
+        cuter = StateMachine(long_short_cuter(hard_max=128, max_len=128, min_len=15))
+        sequence = cuter.run(StrSequence(paragraph))
+        sentences = sequence.sentence_list()
+        return sentences
+
     def cut_sentences(self, text):
         lang = detect(text)
         if lang == 'zh-cn':
             # 中文切句调用 cut_to_sentences
-            sentences = spliter.cut_to_sentences(text)
+            sentences = self.cut_chinese_sentences(text)
         elif lang == 'en':
             # 英文切句调用 split_sentences
             sentences = self.cut_english_sentences(text)
