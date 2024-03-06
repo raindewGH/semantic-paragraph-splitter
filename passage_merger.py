@@ -6,7 +6,7 @@
 MERGE_DICT = ["因此", "因为", "并且", "所以", "但是", "而且", "然而", "可是", "另外"]
 
 
-class SentenceMerger:
+class PassageMerger:
     def __init__(self):
         pass
 
@@ -29,6 +29,7 @@ class SentenceMerger:
 
 
 if __name__ == '__main__':
-    sm = SentenceMerger()
+    pm = PassageMerger()
     sentences = ["今天天气很好", "但是没有风", "我很开心", "心情也不错", "因为我不想吹风"]
-    print(sm.merge_by_dict(sentences))
+    passages = pm.merge_by_dict(sentences)
+    print(passages)
