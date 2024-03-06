@@ -51,11 +51,8 @@ class SemanticParagraphSplitter:
 
         return sentences
 
-    def build_sentences_dict(self, text):
-        single_sentences = self.cut_sentences(text)
-        print(f"{len(single_sentences)} single sentences were found")
-
-        indexed_sentences = [{'sentence': x, 'index': i} for i, x in enumerate(single_sentences)]
+    def build_sentences_dict(self, sentences):
+        indexed_sentences = [{'sentence': x, 'index': i} for i, x in enumerate(sentences)]
         combined_sentences = self.combine_sentences(indexed_sentences)
 
         embeddings = self.model.encode([x['combined_sentence'] for x in combined_sentences], normalize_embeddings=True)
@@ -124,7 +121,13 @@ class SemanticParagraphSplitter:
         return chunks
 
     def split(self, text):
-        combined_sentences = self.build_sentences_dict(text)
+        single_sentences = sps.cut_sentences(content)
+        print(f"{len(single_sentences)} single sentences were found")
+        chunks = self.split_passages(single_sentences)
+        return chunks
+
+    def split_passages(self, passages):
+        combined_sentences = self.build_sentences_dict(passages)
         distances, sentences = self.calculate_cosine_distances(combined_sentences)
 
         indices_above_thresh = self.calculate_indices_above_thresh(distances)
@@ -141,6 +144,7 @@ if __name__ == '__main__':
 
     sps = SemanticParagraphSplitter(threshold=90)
     #print(sps.cut_sentences(content))
+
     chunks = sps.split(content)
 
     for i, chunk in enumerate(chunks):
